@@ -273,3 +273,16 @@
     opacity: 0.8;
   }
 }
+/* Force the grid items to respect their spans and not default to full width */
+.grid-cols-1.md\:grid-cols-2 > div {
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* Ensure the tilted container doesn't break out of the grid slot */
+.bento-tilt_1,
+.bento-tilt_2 {
+  display: block;
+  height: 100%;
+  width: 100%;
+}

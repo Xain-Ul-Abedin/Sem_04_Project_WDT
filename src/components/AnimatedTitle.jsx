@@ -9,8 +9,10 @@ const AnimatedTitle = ({ title, containerClass }) => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const titleAnimation = gsap.timeline({ // Fixed typo: gasp -> gsap
-        scrollTrigger: { // Fixed typo: ScrollTrigger -> scrollTrigger
+      const titleAnimation = gsap.timeline({
+        // Fixed typo: gasp -> gsap
+        scrollTrigger: {
+          // Fixed typo: ScrollTrigger -> scrollTrigger
           trigger: containerRef.current,
           start: "100 bottom", // Fixed typo: '100 b' -> '100 bottom' (assuming you meant 100px from bottom or 100% view)
           end: "center bottom",
@@ -18,15 +20,12 @@ const AnimatedTitle = ({ title, containerClass }) => {
         },
       });
 
-      titleAnimation.to(
-        ".animated-word",
-        {
-          opacity: 1,
-          transform: "translate3d(0,0,0) rotateY(0deg) rotateX(0deg)", // Fixed comma inside string
-          ease: "power2.inOut",
-          stagger: 0.02,
-        }
-      );
+      titleAnimation.to(".animated-word", {
+        opacity: 1,
+        transform: "translate3d(0,0,0) rotateY(0deg) rotateX(0deg)", // Fixed comma inside string
+        ease: "power2.inOut",
+        stagger: 0.02,
+      });
     }, containerRef);
 
     return () => ctx.revert();
