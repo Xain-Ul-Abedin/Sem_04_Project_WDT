@@ -121,7 +121,6 @@ const Features = () => (
             </>
           }
           description="A cross-platform metagame app, turning your activities across Web2 and Web3 games into a rewarding adventure."
-          isComingSoon
         />
       </BentoTilt>
 
@@ -135,7 +134,6 @@ const Features = () => (
               </>
             }
             description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
-            isComingSoon
           />
         </BentoTilt>
 
@@ -148,7 +146,6 @@ const Features = () => (
               </>
             }
             description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
-            isComingSoon
           />
         </BentoTilt>
 
@@ -167,9 +164,9 @@ const Features = () => (
         </BentoTilt>
 
         <BentoTilt className="bento-tilt_2">
-          <div className="flex size-full flex-col justify-between bg-violet-300 p-5">
+          <div className="flex size-full flex-col justify-between bg-green-700 p-5">
             <h1 className="bento-title special-font max-w-64 text-blue-50">
-              M<b>o</b>re co<b>m</b>ing s<b>o</b>on.
+              More coming soon.
             </h1>
 
             <TiLocationArrow className="m-3 scale-[3] self-end fill-blue-50" />

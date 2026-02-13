@@ -25,20 +25,20 @@ const About = () => {
   });
 
   return (
-    <div id="about" className="min-h-screen w-screen">
+    <div id="about%20us" className="min-h-screen w-screen">
       <div className="relative mb-8 mt-36 flex flex-col items-center gap-5">
         <h2 className="font-general text-sm uppercase md:text-[10px]">
-          <b>Welcome to Xyoid :D</b>
+          <b>Welcome to Lahore Zoo :D</b>
         </h2>
 
         <AnimatedTitle
-          title="Disc<b>o</b>ver The W<b>o</b>rld's <br /> L<b>a</b>rgest Shared-<b>A</b>dventure"
+          title="Care They Need<br />Love They Deserve"
           containerClass="mt-5 !text-black text-center"
         />
 
         <div className="about-subtext">
-          <p>The Game of Games Begins-Your Life, Now An Epic Conquest.</p>
-          <p>Xyoid Unites Every Player From Beyond MetaVerses.</p>
+          <p>Unleash the Explorer, A 150-Year Legacy.</p>
+          <p>Journey the Day and Night.</p>
         </div>
       </div>
 

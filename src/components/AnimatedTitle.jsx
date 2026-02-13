@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger"; // Ensure this is imported if used directly
+import { ScrollTrigger } from "gsap/ScrollTrigger"; 
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,11 +10,9 @@ const AnimatedTitle = ({ title, containerClass }) => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       const titleAnimation = gsap.timeline({
-        // Fixed typo: gasp -> gsap
         scrollTrigger: {
-          // Fixed typo: ScrollTrigger -> scrollTrigger
           trigger: containerRef.current,
-          start: "100 bottom", // Fixed typo: '100 b' -> '100 bottom' (assuming you meant 100px from bottom or 100% view)
+          start: "100 bottom", 
           end: "center bottom",
           toggleActions: "play none none reverse",
         },
@@ -22,7 +20,7 @@ const AnimatedTitle = ({ title, containerClass }) => {
 
       titleAnimation.to(".animated-word", {
         opacity: 1,
-        transform: "translate3d(0,0,0) rotateY(0deg) rotateX(0deg)", // Fixed comma inside string
+        transform: "translate3d(0,0,0) rotateY(0deg) rotateX(0deg)", 
         ease: "power2.inOut",
         stagger: 0.02,
       });
@@ -33,8 +31,8 @@ const AnimatedTitle = ({ title, containerClass }) => {
 
   return (
     <div
-      ref={containerRef} // Added missing ref
-      className={`animated-title ${containerClass}`} // Fixed template literal syntax
+      ref={containerRef} 
+      className={`animated-title ${containerClass}`} 
     >
       {title.split("<br />").map((line, index) => (
         <div

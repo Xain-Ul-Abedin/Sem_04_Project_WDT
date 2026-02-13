@@ -35,7 +35,7 @@
 /* 2. CUSTOM UTILITIES (Manual Definitions) */
 /* Keep these if you use them in HTML, but do NOT @apply them */
 .special-font b {
-  font-family: "zentry";
+  font-family: "Impact";
   font-feature-settings: "ss01" on;
 }
 
@@ -48,7 +48,7 @@
   .animated-word {
     /* FIX: Replaced '@apply special-font' with actual styles */
     @apply font-zentry font-black opacity-0;
-    font-family: "zentry", sans-serif;
+    font-family: "Impact", sans-serif;
     font-feature-settings: "ss01" on;
 
     transform: translate3d(10px, 51px, -60px) rotateY(60deg) rotateX(-40deg);
