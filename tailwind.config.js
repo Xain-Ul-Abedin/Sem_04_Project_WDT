@@ -28,6 +28,7 @@ export default {
           100: "#8e983f",
           300: "#edff66",
         },
+        // Semantic Theme Colors Removed
       },
     },
   },

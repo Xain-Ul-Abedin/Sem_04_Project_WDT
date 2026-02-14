@@ -38,7 +38,7 @@ const Contact = () => {
 
           <AnimatedTitle
             title="Got a Complaint?"
-            className="special-font !md:text-[6.2rem] w-full font-zentry !text-5xl !font-white !leading-[.9]"
+            className="special-font !md:text-[6.2rem] w-full font-zentry !text-5xl !text-white !leading-[.9]"
           />
           <div className="contact-subtext mt-10">
             <p>Feel free to visit Director Office,</p>
@@ -46,7 +46,7 @@ const Contact = () => {
               Call us on <b className="text-green-300">0423-6314684</b>
             </p>
             <p >
-              Email us at 
+              Email us at
               <b className="text-yellow-300"> lahorezoolahore@gmail.com</b>
             </p>
             <p className="text-[10px] mt-5">
@@ -57,6 +57,7 @@ const Contact = () => {
           <Button
             title="contact us"
             containerClass="mt-5 cursor-pointer bg-white"
+            accentColor="#EDFF66"
           />
         </div>
       </div>

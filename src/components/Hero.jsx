@@ -154,7 +154,8 @@ const Hero = () => {
               id="Book-Ticket"
               title="Plan A visit"
               leftIcon={<TiLocationArrow />}
-              containerClass="bg-green-300 flex-center gap-1"
+              containerClass="bg-green-300 flex-center gap-1 border border-transparent hover:border-green-500 transition-all duration-300"
+              accentColor="#fff"
             />
           </div>
         </div>

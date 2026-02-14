@@ -25,7 +25,7 @@ const About = () => {
   });
 
   return (
-    <div id="about%20us" className="min-h-screen w-screen">
+    <div id="about-us" className="min-h-screen w-screen">
       <div className="relative mb-8 mt-36 flex flex-col items-center gap-5">
         <h2 className="font-general text-sm uppercase md:text-[10px]">
           <b>Welcome to Lahore Zoo :D</b>

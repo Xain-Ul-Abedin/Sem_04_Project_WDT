@@ -99,16 +99,15 @@ export const BentoCard = ({ src, title, description, isComingSoon }) => {
 };
 
 const Features = () => (
-  <section className="bg-black pb-52">
+  <section id="what-we-offer" className="bg-black pb-52">
     <div className="container mx-auto px-3 md:px-10">
       <div className="px-5 py-32">
         <p className="font-circular-web text-lg text-blue-50">
-          Into the Metagame Layer
+          Experience the Wild
         </p>
         <p className="max-w-md font-circular-web text-lg text-blue-50 opacity-50">
-          Immerse yourself in a rich and ever-expanding universe where a vibrant
-          array of products converge into an interconnected overlay experience
-          on your world.
+          Discover a world of wonder where nature's beauty meets conservation.
+          Experience the diverse wildlife and engaging educational programs at Lahore Zoo.
         </p>
       </div>
 
@@ -117,10 +116,10 @@ const Features = () => (
           src="videos/feature-1.mp4"
           title={
             <>
-              radia<b>n</b>t
+              Jun<b>g</b>le Safari
             </>
           }
-          description="A cross-platform metagame app, turning your activities across Web2 and Web3 games into a rewarding adventure."
+          description="Embark on a thrilling journey through our simulated natural habitats, observing majestic predators and gentle giants up close."
         />
       </BentoTilt>
 
@@ -130,10 +129,10 @@ const Features = () => (
             src="videos/feature-2.mp4"
             title={
               <>
-                zig<b>m</b>a
+                Av<b>i</b>ary
               </>
             }
-            description="An anime and gaming-inspired NFT collection - the IP primed for expansion."
+            description="Walk among hundreds of exotic birds in our expansive walk-through aviary, a paradise of color and song."
           />
         </BentoTilt>
 
@@ -142,23 +141,22 @@ const Features = () => (
             src="videos/feature-3.mp4"
             title={
               <>
-                Xy<b>o</b>id
+                Aqua<b>r</b>ium
               </>
             }
-            description="A gamified social hub, adding a new dimension of play to social interaction for Web3 communities."
+            description="Dive into the mysteries of the deep. Explore our collection of aquatic life from local rivers to the ocean."
           />
         </BentoTilt>
 
         <BentoTilt className="bento-tilt_1 me-14 md:col-span-1 md:me-0">
-            
           <BentoCard
             src="videos/feature-4.mp4"
             title={
               <>
-                az<b>u</b>l
+                Ni<b>g</b>ht Safari
               </>
             }
-            description="A cross-world AI Agent - elevating your gameplay to be more fun and productive."
+            description="Experience the zoo after dark. See nocturnal animals in their active element under the moonlight."
             isComingSoon
           />
         </BentoTilt>

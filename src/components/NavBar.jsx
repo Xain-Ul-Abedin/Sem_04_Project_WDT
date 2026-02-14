@@ -1,19 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useWindowScroll } from "react-use";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from "./Button";
-import { TiLocation, TiLocationArrow, TiThMenu, TiTimes } from "react-icons/ti";
+import { TiLocationArrow, TiThMenu, TiTimes, TiWeatherSunny, TiWeatherNight } from "react-icons/ti";
 import gsap from "gsap";
 
 const navItems = [
-  "About Us",
-  "What We Offer",
-  "Get Involved",
-  "Info Desk",
-  "Media Room",
+  { name: "About Us", link: "#about-us" },
+  { name: "What We Offer", link: "#what-we-offer" },
+  { name: "Get Involved", link: "#adopt" },
+  { name: "Info Desk", link: "#how-to-reach" },
+  { name: "Media Room", link: "#story" },
 ];
 
 const NavBar = () => {
-  const [lastScrollY, setLastScrollY] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [isNavVisible, setIsNavVisible] = useState(true);
 
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -24,12 +25,38 @@ const NavBar = () => {
   const audioElementRef = useRef(null);
 
   const { y: currentScrollY } = useWindowScroll();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavClick = (e, link) => {
+    e.preventDefault();
+
+    if (link.startsWith("#")) {
+      if (location.pathname === "/") {
+        const section = document.querySelector(link);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        // Navigate to home and scroll
+        navigate("/");
+        setTimeout(() => {
+          const section = document.querySelector(link);
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 100);
+      }
+    } else {
+      navigate(link);
+    }
+  };
 
   useEffect(() => {
     if (isMobileMenuOpen) {
       setIsNavVisible(true);
       navContainerRef.current.classList.add("floating-nav");
-    } else if (currentScrollY == 0) {
+    } else if (currentScrollY === 0) {
       setIsNavVisible(true);
       navContainerRef.current.classList.remove("floating-nav");
     } else if (currentScrollY > lastScrollY) {
@@ -60,14 +87,13 @@ const NavBar = () => {
     setIsMobileMenuOpen((prev) => !prev);
   };
 
-  (useEffect(() => {
+  useEffect(() => {
     if (isAudioPlaying) {
       audioElementRef.current.play();
     } else {
       audioElementRef.current.pause();
     }
-  }),
-    [isAudioPlaying]);
+  }, [isAudioPlaying]);
 
   return (
     <div
@@ -77,13 +103,19 @@ const NavBar = () => {
       <header className="absolute top-1/2 w-full -translate-y-1/2">
         <nav className="flex size-full items-center justify-between p-3">
           <div className="flex items-center gap-7">
-            <img src="/img/logo.png" alt="logo" className="w-12.5 rounded-lg" />
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="cursor-pointer"
+            >
+              <img src="/img/logo.png" alt="logo" className="w-12.5 rounded-lg" />
+            </button>
 
             <Button
               id="Ticket-button"
               title="Book Now"
               rightIcon={<TiLocationArrow />}
               containerClass="bg-blue-50 md:flex hidden item-center justify-center gap-1"
+              accentColor="#22c55e"
             />
           </div>
 
@@ -91,11 +123,12 @@ const NavBar = () => {
             <div className="hidden md:block">
               {navItems.map((item) => (
                 <a
-                  key={item}
-                  href={`#${item.toLocaleLowerCase()}`}
+                  key={item.name}
+                  href={item.link}
+                  onClick={(e) => handleNavClick(e, item.link)}
                   className=" nav-hover-btn "
                 >
-                  {item}
+                  {item.name}
                 </a>
               ))}
             </div>
@@ -120,6 +153,14 @@ const NavBar = () => {
               ))}
             </button>
 
+            {/* Theme Toggle Removed */}
+            <button
+              className="ml-5 flex items-center justify-center text-2xl cursor-pointer transition-colors duration-300 hover:text-blue-300"
+              onClick={() => { }}
+              style={{ display: 'none' }}
+            >
+            </button>
+
             <button
               className="ml-5 md:hidden text-2xl flex items-center justify-center p-2 text-white"
               onClick={toggleMobileMenu}
@@ -134,12 +175,15 @@ const NavBar = () => {
         <div className="absolute top-full left-0 w-full bg-black rounded-lg border border-white/20 mt-2 p-6 flex flex-col items-center gap-6 md:hidden">
           {navItems.map((item) => (
             <a
-              key={item}
-              href={`#${item.toLocaleLowerCase()}`}
-              className="text-white text-lg font-bold uppercase hover:text-blue-400 transition-colors text-[10px]"
-              onClick={() => setIsMobileMenuOpen(false)}
+              key={item.name}
+              href={item.link}
+              className="text-white text-lg font-bold uppercase hover:text-blue-400 transition-colors"
+              onClick={(e) => {
+                handleNavClick(e, item.link);
+                setIsMobileMenuOpen(false);
+              }}
             >
-              {item}
+              {item.name}
             </a>
           ))}
           <Button
@@ -147,6 +191,7 @@ const NavBar = () => {
             title="Book Now"
             rightIcon={<TiLocationArrow />}
             containerClass="bg-blue-50 flex item-center justify-center gap-1 w-full max-w-[200px]"
+            accentColor="#22c55e"
           />
         </div>
       )}

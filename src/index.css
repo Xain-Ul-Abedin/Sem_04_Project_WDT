@@ -7,27 +7,38 @@
     font-family: "zentry";
     src: url("/fonts/zentry-regular.woff2") format("woff2");
   }
+
   @font-face {
     font-family: "general";
     src: url("/fonts/general.woff2") format("woff2");
   }
+
   @font-face {
     font-family: "robert-medium";
     src: url("/fonts/robert-medium.woff2") format("woff2");
   }
+
   @font-face {
     font-family: "robert-regular";
     src: url("/fonts/robert-regular.woff2") format("woff2");
   }
+
   @font-face {
     font-family: "circular-web";
     src: url("/fonts/circularweb-book.woff2") format("woff2");
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* THEME VARIABLES REMOVED */
+
   body {
     width: 100%;
     overflow-x: hidden;
     background-color: #dfdff0;
+    color: black;
     font-family: "general", sans-serif;
   }
 }
@@ -97,6 +108,10 @@
     @apply absolute bottom-[-80dvh] left-1/2 w-full max-w-96 -translate-x-1/2 text-center font-circular-web text-lg md:max-w-[34rem];
   }
 
+  .contact-subtext {
+    @apply font-circular-web text-lg text-blue-50;
+  }
+
   .about-image {
     @apply absolute left-1/2 top-0 z-20 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw];
   }
@@ -111,16 +126,15 @@
 
   .story-img-container {
     @apply relative md:h-dvh h-[90vh] w-full;
-    filter: url("#flt_tag");
   }
 
   .story-img-mask {
-    @apply absolute left-0 top-0 size-full overflow-hidden md:left-[20%] md:top-[-10%] md:size-4/5;
-    clip-path: polygon(4% 0, 83% 21%, 100% 73%, 0% 100%);
+    @apply absolute left-0 top-0 size-full overflow-hidden md:left-0 md:top-0 md:size-full;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   }
 
   .story-img-content {
-    @apply absolute w-full md:h-dvh h-[50dvh] opacity-100 left-10 top-16 md:left-0 md:top-10 lg:left-[-300px] lg:top-[-100px];
+    @apply absolute w-full h-full opacity-100 left-0 top-0;
     transform: translate3d(0, 0, 0) rotateX(0) rotateY(0) rotateZ(0) scale(1);
   }
 
@@ -164,15 +178,18 @@
     height: 4px;
     transform: translateY(0);
   }
+
   50% {
     height: 16px;
     transform: translateY(-4px);
   }
+
   100% {
     height: 4px;
     transform: translateY(0);
   }
 }
+
 /* 5. LOADER ANIMATION */
 .three-body {
   --uib-size: 35px;
@@ -245,17 +262,20 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
 
 @keyframes wobble1 {
+
   0%,
   100% {
     transform: translateY(0%) scale(1);
     opacity: 1;
   }
+
   50% {
     transform: translateY(-65%) scale(0.6);
     opacity: 0.8;
@@ -263,18 +283,21 @@
 }
 
 @keyframes wobble2 {
+
   0%,
   100% {
     transform: translateY(0%) scale(1);
     opacity: 1;
   }
+
   50% {
     transform: translateY(65%) scale(0.6);
     opacity: 0.8;
   }
 }
+
 /* Force the grid items to respect their spans and not default to full width */
-.grid-cols-1.md\:grid-cols-2 > div {
+.grid-cols-1.md\:grid-cols-2>div {
   width: auto !important;
   min-width: 0 !important;
 }
