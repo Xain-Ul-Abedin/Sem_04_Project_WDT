@@ -1,0 +1,1024 @@
+# 🦁 Lahore Zoo — Full MERN Stack Transformation
+
+Transform the existing static landing page into a **complete, production-grade** multi-page Zoo website with MongoDB, Express backend, JWT authentication, ticket reservations, admin dashboard, and premium animated UI.
+
+---
+
+## Current State Analysis
+
+### What Exists (Frontend Only)
+| Component | Status | Notes |
+|-----------|--------|-------|
+| Hero (video carousel) | ✅ Working | GSAP + ScrollTrigger animations |
+| NavBar | ✅ Working | Mobile menu, audio toggle, scroll-hide |
+| About | ✅ Working | Clip-path animation |
+| Features (Bento Grid) | ✅ Working | Tilt effects, video cards |
+| Interactive Guide Map | ✅ Working | SVG overlay with map coordinates |
+| Story (Suzi tribute) | ✅ Working | Parallax floating image |
+| Adopt a Pet | ✅ Hardcoded | Static data, no backend |
+| Contact | ✅ Static | No form submission |
+| HowToReach | ✅ Working | Google Maps embed |
+| Gallery | ⚠️ Placeholder | Empty "under construction" page |
+| Footer | ✅ Working | Social links |
+
+### What's Missing
+- ❌ **No Backend** — No Express server, no API routes
+- ❌ **No Database** — All data is hardcoded in JSX
+- ❌ **No Authentication** — No login/register/JWT
+- ❌ **No Ticket Reservation** — Buttons exist but do nothing
+- ❌ **No Admin Dashboard** — No management or reporting
+- ❌ **No Gallery System** — Placeholder page only
+- ❌ **No DaisyUI** — Using raw Tailwind only
+- ❌ **No MVC Architecture** — Flat component structure
+- ❌ **No SEO or Multi-page Routing** — Single landing page
+
+---
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Monorepo Structure**: The project will be restructured into a monorepo with `client/` and `server/` directories inside `test-project/`. The existing frontend code moves into `client/`. This is the standard MERN approach.
+
+> [!IMPORTANT]
+> **DaisyUI Version**: We'll use **DaisyUI v5** (latest, compatible with Tailwind v4). This integrates as a Tailwind plugin and gives us pre-built themed components (modals, drawers, cards, tables, toasts) while keeping your custom GSAP animations.
+
+> [!WARNING]
+> **MongoDB**: You'll need MongoDB installed locally OR a free MongoDB Atlas cluster (512 MB free tier). The plan assumes a connection string in a `.env` file. **Which do you prefer — local MongoDB or Atlas cloud?**
+
+> [!IMPORTANT]
+> **Free Assets Strategy**: All images/videos will come from:
+> - [Unsplash](https://unsplash.com) — Free high-res photos (already used in AdoptPet)
+> - [Pexels](https://pexels.com/videos) — Free stock videos
+> - [Pixabay](https://pixabay.com) — Free images + videos
+> - [Lucide Icons](https://lucide.dev) / [React Icons](https://react-icons.github.io) — Icon libraries
+> - Existing assets in `/public/` will be preserved and reused
+
+---
+
+## Proposed Architecture
+
+### Monorepo Structure
+```
+mern-stack/test-project/
+├── client/                          # React Frontend (Vite)
+│   ├── public/                      # Static assets (existing)
+│   │   ├── img/
+│   │   ├── videos/
+│   │   ├── fonts/
+│   │   └── audio/
+│   ├── src/
+│   │   ├── components/              # Reusable UI components
+│   │   │   ├── ui/                  # DaisyUI-based atoms (Button, Modal, Card, Toast)
+│   │   │   ├── layout/             # NavBar, Footer, Sidebar
+│   │   │   └── shared/             # AnimatedTitle, VideoPreview, BentoCard
+│   │   ├── pages/                   # Route-level page components
+│   │   │   ├── Home.jsx
+│   │   │   ├── Gallery.jsx
+│   │   │   ├── Animals.jsx
+│   │   │   ├── Events.jsx
+│   │   │   ├── Tickets.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── MyBookings.jsx
+│   │   │   └── admin/
+│   │   │       ├── Dashboard.jsx
+│   │   │       ├── ManageAnimals.jsx
+│   │   │       ├── ManageTickets.jsx
+│   │   │       ├── ManageUsers.jsx
+│   │   │       └── Reports.jsx
+│   │   ├── context/                 # React Context providers
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── ThemeContext.jsx
+│   │   ├── hooks/                   # Custom hooks
+│   │   │   ├── useAuth.js
+│   │   │   └── useApi.js
+│   │   ├── services/                # API service layer (Axios)
+│   │   │   ├── api.js               # Axios instance
+│   │   │   ├── authService.js
+│   │   │   ├── animalService.js
+│   │   │   ├── ticketService.js
+│   │   │   ├── galleryService.js
+│   │   │   └── adminService.js
+│   │   ├── utils/                   # Utilities
+│   │   │   ├── constants.js
+│   │   │   └── helpers.js
+│   │   ├── data/                    # Static data (mapCoordinates, etc.)
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
+│   ├── package.json
+│   ├── vite.config.js
+│   └── tailwind.config.js
+│
+├── server/                          # Express Backend (MVC + N-Tier)
+│   ├── src/
+│   │   ├── config/                  # Configuration
+│   │   │   ├── db.js                # MongoDB connection
+│   │   │   ├── env.js               # Environment variables
+│   │   │   └── cors.js              # CORS config
+│   │   ├── models/                  # Mongoose Models (Data Layer)
+│   │   │   ├── User.js
+│   │   │   ├── Animal.js
+│   │   │   ├── Ticket.js
+│   │   │   ├── Booking.js
+│   │   │   ├── GalleryItem.js
+│   │   │   └── Event.js
+│   │   ├── controllers/             # Controllers (Presentation Layer)
+│   │   │   ├── authController.js
+│   │   │   ├── animalController.js
+│   │   │   ├── ticketController.js
+│   │   │   ├── bookingController.js
+│   │   │   ├── galleryController.js
+│   │   │   └── adminController.js
+│   │   ├── services/                # Business Logic Layer (BLL)
+│   │   │   ├── authService.js
+│   │   │   ├── animalService.js
+│   │   │   ├── ticketService.js
+│   │   │   ├── bookingService.js
+│   │   │   ├── galleryService.js
+│   │   │   └── adminService.js
+│   │   ├── middleware/              # Express Middleware
+│   │   │   ├── auth.js              # JWT verification
+│   │   │   ├── roleGuard.js         # RBAC middleware
+│   │   │   ├── validate.js          # Request validation
+│   │   │   └── errorHandler.js      # Global error handler
+│   │   ├── routes/                  # Express Routes
+│   │   │   ├── authRoutes.js
+│   │   │   ├── animalRoutes.js
+│   │   │   ├── ticketRoutes.js
+│   │   │   ├── bookingRoutes.js
+│   │   │   ├── galleryRoutes.js
+│   │   │   └── adminRoutes.js
+│   │   ├── utils/                   # Utilities
+│   │   │   ├── ApiError.js          # Custom error class
+│   │   │   ├── ApiResponse.js       # Standard response wrapper
+│   │   │   └── seedData.js          # DB seeder script
+│   │   └── app.js                   # Express app setup
+│   ├── server.js                    # Entry point
+│   ├── .env                         # Environment variables
+│   ├── .env.example
+│   └── package.json
+│
+├── package.json                     # Root workspace scripts
+└── README.md
+```
+
+### N-Tier Architecture Flow
+```mermaid
+graph LR
+    A["React Client"] -->|HTTP/Axios| B["Express Routes"]
+    B -->|Validate| C["Middleware"]
+    C -->|Delegate| D["Controllers"]
+    D -->|Orchestrate| E["Services (BLL)"]
+    E -->|CRUD| F["Models (DAL)"]
+    F -->|Query| G["MongoDB"]
+```
+
+---
+
+## Proposed Changes
+
+### Phase 1: Foundation & Project Restructuring
+
+#### Root Workspace
+
+##### [NEW] [package.json](file:///c:/Users/User/Documents/VS%20Code/Projects/mern-stack/test-project/package.json)
+Root workspace `package.json` with concurrent scripts to run both client and server:
+```json
+{
+  "name": "lahore-zoo",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "seed": "cd server && npm run seed"
+  }
+}
+```
+
+---
+
+#### Server Setup
+
+##### [NEW] server/package.json
+Express server dependencies:
+- `express`, `mongoose`, `cors`, `dotenv`
+- `bcryptjs`, `jsonwebtoken` — Authentication
+- `express-validator` — Input validation
+- `nodemon` — Dev hot-reload
+- `concurrently` — Run client+server
+
+##### [NEW] server/server.js
+Entry point: connects to MongoDB, starts Express on port 5000.
+
+##### [NEW] server/src/app.js
+Express app configuration: CORS, JSON parsing, route mounting, global error handler.
+
+##### [NEW] server/src/config/db.js
+Mongoose connection with retry logic and event logging.
+
+##### [NEW] server/.env.example
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/lahore_zoo
+JWT_SECRET=your_jwt_secret_here
+JWT_EXPIRES_IN=7d
+```
+
+---
+
+#### Client Migration
+
+Move all existing files from `test-project/` root into `test-project/client/`:
+- `src/`, `public/`, `index.html`, `vite.config.js`, `tailwind.config.js`, `postcss.config.js`, `eslint.config.js`
+
+##### [MODIFY] client/package.json
+Add new dependencies:
+- `daisyui` v5 — Component library
+- `axios` — HTTP client
+- `react-hot-toast` / `sonner` — Toast notifications
+- `lucide-react` — Modern icon set (alongside react-icons)
+- `react-datepicker` — Date selection for bookings
+- `chart.js` + `react-chartjs-2` — Admin dashboard charts
+
+##### [MODIFY] client/tailwind.config.js
+Add DaisyUI plugin and zoo-themed color palette:
+```js
+plugins: [require("daisyui")],
+daisyui: {
+  themes: [{
+    zoo: {
+      primary: "#008236",    // Zoo green
+      secondary: "#EDFF66",  // Accent yellow
+      accent: "#4FB7DD",     // Sky blue
+      neutral: "#1a1a2e",    // Dark
+      "base-100": "#ffffff",
+    }
+  }, "dark"],
+}
+```
+
+##### [MODIFY] client/vite.config.js
+Add proxy for API calls to backend:
+```js
+server: {
+  proxy: { "/api": "http://localhost:5000" }
+}
+```
+
+---
+
+### Phase 2: MongoDB Schema Design
+
+##### [NEW] server/src/models/User.js
+```js
+{
+  name: String,
+  email: { type: String, unique: true },
+  password: String,          // bcrypt hashed
+  role: { type: String, enum: ["visitor", "admin"], default: "visitor" },
+  phone: String,
+  avatar: String,
+  bookings: [{ type: ObjectId, ref: "Booking" }],
+  isActive: { type: Boolean, default: true },  // Soft delete
+  createdAt, updatedAt       // timestamps: true
+}
+```
+
+##### [NEW] server/src/models/Animal.js
+```js
+{
+  name: String,
+  species: String,
+  category: { type: String, enum: ["mammal", "bird", "reptile", "aquatic", "insect"] },
+  description: String,
+  habitat: String,
+  diet: String,
+  funFact: String,
+  imageUrl: String,          // Unsplash/Pexels URL
+  galleryImages: [String],
+  location: {                // For interactive map
+    zone: String,
+    coordinates: { x: Number, y: Number }
+  },
+  conservationStatus: String,
+  isActive: Boolean,
+  createdAt, updatedAt
+}
+```
+
+##### [NEW] server/src/models/Ticket.js
+```js
+{
+  name: String,              // "Adult", "Child", "Senior", "Family Pack"
+  price: Number,
+  description: String,
+  includes: [String],        // ["Zoo Entry", "Aviary Access", "Aquarium"]
+  maxPerBooking: Number,
+  isActive: Boolean,
+  createdAt, updatedAt
+}
+```
+
+##### [NEW] server/src/models/Booking.js
+```js
+{
+  user: { type: ObjectId, ref: "User" },
+  bookingRef: String,        // Auto-generated "LZ-20260414-XXXX"
+  visitDate: Date,
+  tickets: [{
+    ticketType: { type: ObjectId, ref: "Ticket" },
+    quantity: Number,
+    subtotal: Number
+  }],
+  totalAmount: Number,
+  totalVisitors: Number,
+  status: { type: String, enum: ["pending", "confirmed", "cancelled", "completed"], default: "pending" },
+  paymentStatus: { type: String, enum: ["unpaid", "paid", "refunded"], default: "unpaid" },
+  visitors: [{               // Names of each visitor
+    name: String,
+    age: Number,
+    type: String             // "adult", "child", "senior"
+  }],
+  specialRequests: String,
+  createdAt, updatedAt
+}
+```
+
+##### [NEW] server/src/models/GalleryItem.js
+```js
+{
+  title: String,
+  description: String,
+  imageUrl: String,
+  category: { type: String, enum: ["animals", "events", "habitat", "aerial", "visitors"] },
+  tags: [String],
+  photographer: String,
+  isFeatured: Boolean,
+  likes: { type: Number, default: 0 },
+  isActive: Boolean,
+  createdAt, updatedAt
+}
+```
+
+##### [NEW] server/src/models/Event.js
+```js
+{
+  title: String,
+  description: String,
+  imageUrl: String,
+  date: Date,
+  time: String,
+  venue: String,             // "Main Amphitheater", "Aviary", etc.
+  category: String,          // "feeding", "show", "educational", "seasonal"
+  isFeatured: Boolean,
+  isActive: Boolean,
+  createdAt, updatedAt
+}
+```
+
+---
+
+### Phase 3: REST API Endpoints
+
+#### Auth Routes — `/api/auth`
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | `/register` | Public | Register new visitor |
+| POST | `/login` | Public | Login, return JWT |
+| GET | `/me` | Auth | Get current user profile |
+| PUT | `/me` | Auth | Update profile |
+| PUT | `/change-password` | Auth | Change password |
+
+#### Animal Routes — `/api/animals`
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/` | Public | List all animals (filter, search, paginate) |
+| GET | `/:id` | Public | Get single animal |
+| POST | `/` | Admin | Create animal |
+| PUT | `/:id` | Admin | Update animal |
+| DELETE | `/:id` | Admin | Soft-delete animal |
+
+#### Ticket Routes — `/api/tickets`
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/` | Public | List active ticket types |
+| POST | `/` | Admin | Create ticket type |
+| PUT | `/:id` | Admin | Update ticket |
+
+#### Booking Routes — `/api/bookings`
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| POST | `/` | Auth | Create new booking |
+| GET | `/my` | Auth | Get user's bookings |
+| GET | `/:id` | Auth | Get booking details |
+| PUT | `/:id/cancel` | Auth | Cancel own booking |
+| GET | `/` | Admin | List all bookings |
+| PUT | `/:id/status` | Admin | Update booking status |
+
+#### Gallery Routes — `/api/gallery`
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/` | Public | List gallery items (filter by category) |
+| GET | `/featured` | Public | Get featured items |
+| POST | `/` | Admin | Add gallery item |
+| PUT | `/:id` | Admin | Update gallery item |
+| DELETE | `/:id` | Admin | Remove gallery item |
+
+#### Admin Routes — `/api/admin`
+| Method | Endpoint | Access | Description |
+|--------|----------|--------|-------------|
+| GET | `/stats` | Admin | Dashboard stats (total bookings, revenue, visitors) |
+| GET | `/reports/revenue` | Admin | Revenue report by date range |
+| GET | `/reports/visitors` | Admin | Visitor analytics |
+| GET | `/users` | Admin | List all users |
+| PUT | `/users/:id/role` | Admin | Change user role |
+
+---
+
+### Phase 4: Authentication System
+
+##### [NEW] server/src/middleware/auth.js
+JWT verification middleware — extracts token from `Authorization: Bearer <token>` header, verifies and attaches `req.user`.
+
+##### [NEW] server/src/middleware/roleGuard.js
+RBAC middleware: `roleGuard("admin")` — checks `req.user.role`.
+
+##### [NEW] client/src/context/AuthContext.jsx
+React context providing:
+- `user`, `token`, `isAuthenticated`, `isAdmin`
+- `login()`, `register()`, `logout()`
+- Persists token to `localStorage`
+- Auto-fetches user profile on mount
+
+##### [NEW] client/src/pages/Login.jsx
+Premium login page with:
+- DaisyUI form components
+- GSAP entrance animations
+- Wildlife background image
+- Toast notifications on error/success
+
+##### [NEW] client/src/pages/Register.jsx
+Registration form with field validation, matching design aesthetic.
+
+---
+
+### Phase 5: Ticket Reservation System
+
+##### [NEW] client/src/pages/Tickets.jsx
+Full booking flow in a **multi-step form**:
+1. **Select Date** — Calendar picker, shows availability
+2. **Choose Tickets** — Ticket type cards with +/- quantity
+3. **Visitor Details** — Names and ages for each visitor
+4. **Review & Confirm** — Order summary, total calculation
+5. **Confirmation** — Booking reference, printable receipt
+
+##### [NEW] client/src/pages/MyBookings.jsx
+User's booking history with:
+- Status badges (pending/confirmed/cancelled/completed)
+- Cancel booking action
+- Filter by status/date
+- Booking detail modal
+
+---
+
+### Phase 6: Admin Dashboard
+
+##### [NEW] client/src/pages/admin/Dashboard.jsx
+Admin overview with:
+- **Stat Cards** — Total visitors, revenue, active bookings, animals count
+- **Revenue Chart** — Line chart (Chart.js) showing daily/weekly/monthly revenue
+- **Recent Bookings Table** — Last 10 bookings with quick actions
+- **Visitor Breakdown** — Pie chart by ticket type
+- DaisyUI `drawer` layout with sidebar navigation
+
+##### [NEW] client/src/pages/admin/ManageAnimals.jsx
+CRUD table for animals with search, filter, add/edit modal forms.
+
+##### [NEW] client/src/pages/admin/ManageTickets.jsx
+Ticket type management with pricing.
+
+##### [NEW] client/src/pages/admin/ManageUsers.jsx
+User management with role assignment.
+
+##### [NEW] client/src/pages/admin/Reports.jsx
+Detailed reports with date-range filters and exportable data.
+
+---
+
+### Phase 7: Enhanced Frontend Pages
+
+##### [MODIFY] client/src/pages/Gallery.jsx
+Transform from placeholder to a **masonry grid gallery**:
+- Fetches from `/api/gallery` 
+- Category filter tabs (Animals, Events, Habitat, Aerial)
+- Lightbox modal on image click
+- GSAP staggered entrance animations
+- Lazy loading with intersection observer
+
+##### [NEW] client/src/pages/Animals.jsx
+Animal directory page:
+- Grid of animal cards with images from DB
+- Search & filter by category
+- Click to view detailed animal profile
+- Conservation status badges
+- Fun facts section
+
+##### [NEW] client/src/pages/Events.jsx
+Upcoming events & shows:
+- Timeline layout for daily feeding schedules
+- Featured event hero banner
+- Calendar view toggle
+
+##### [MODIFY] client/src/components/layout/NavBar.jsx
+Enhanced navigation with:
+- Auth state awareness (Login/Register vs Profile/Logout)
+- Admin panel link for admin users
+- DaisyUI dropdown menus
+- Active route highlighting
+
+---
+
+## Database Seeding
+
+##### [NEW] server/src/utils/seedData.js
+Pre-populates the database with:
+- **1 Admin account** — `admin@lahorezoo.pk` / `Admin@123`
+- **1 Visitor account** — `visitor@test.com` / `Visitor@123`
+- **30+ Animals** — Lions, tigers, elephants, parrots, crocodiles, etc. with real Unsplash image URLs
+- **4 Ticket Types** — Adult (₨100), Child (₨50), Senior (₨70), Family Pack (₨300)
+- **20+ Gallery Items** — Wildlife photography from Unsplash/Pexels
+- **10+ Events** — Feeding times, shows, educational programs
+- **5 Sample Bookings** — Demonstrated booking flow data
+
+---
+
+## Technology Stack Summary
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | React 19 + Vite 7 | SPA framework |
+| **Routing** | React Router v7 | Multi-page navigation |
+| **Styling** | Tailwind CSS v4 + DaisyUI v5 | Component library + utilities |
+| **Animations** | GSAP 3 + Framer Motion | Scroll, entrance, and micro-animations |
+| **Icons** | React Icons + Lucide React | Icon sets |
+| **HTTP Client** | Axios | API communication |
+| **Charts** | Chart.js + react-chartjs-2 | Admin dashboard visualizations |
+| **Backend** | Express.js 5 | REST API server |
+| **Database** | MongoDB + Mongoose | Document database & ODM |
+| **Auth** | JWT + bcryptjs | Token-based authentication |
+| **Validation** | express-validator | Server-side input validation |
+| **Dev Tools** | Nodemon + Concurrently | Hot reload + parallel dev servers |
+
+---
+
+## Decisions Confirmed ✅
+
+| Question | Decision |
+|----------|----------|
+| MongoDB | **Local install** — `mongodb://localhost:27017/lahore_zoo` |
+| Payments | **Mock payment** — 5 methods: Visa, Mastercard, JazzCash, EasyPaisa, Cash on Arrival |
+| Images | **Local file storage** — Multer uploads to `server/uploads/`, served as static files |
+
+---
+
+## Additional Features Added (Post-Review)
+
+These are features I identified as missing that are important for a complete, professional zoo website:
+
+### Security & SQA
+- **Rate Limiting** — `express-rate-limit` to prevent API abuse
+- **Input Sanitization** — `express-mongo-sanitize` to prevent NoSQL injection
+- **Helmet.js** — HTTP security headers
+- **CORS whitelist** — Only allow frontend origin
+- **Password strength validation** — Minimum requirements enforced
+
+### Auth Enhancements
+- **Forgot Password flow** — Email-based reset token (console-logged for dev, ready for real SMTP)
+- **Password reset page** — Token-validated password change
+
+### UX Essentials
+- **404 Not Found page** — Animated zoo-themed error page
+- **Loading skeletons** — DaisyUI skeleton components during API fetches
+- **Dark/Light theme toggle** — Using DaisyUI theme switching (your NavBar already had a hidden toggle!)
+- **Toast notifications** — `react-hot-toast` for all user feedback
+- **Booking QR Code** — Generated via `qrcode` package for printable e-tickets
+- **Print Ticket** — Browser print-optimized booking confirmation
+
+### Content Pages
+- **FAQ/Help page** — Common visitor questions with DaisyUI accordion
+- **Privacy Policy & Terms** — Footer links that actually work
+
+### Image Upload System (Multer)
+```
+server/uploads/
+├── animals/          # Animal profile & gallery images
+├── gallery/          # Gallery section images
+├── events/           # Event banners
+└── avatars/          # User profile pictures
+```
+- Max file size: 5MB
+- Allowed types: `.jpg`, `.jpeg`, `.png`, `.webp`
+- Auto-resized thumbnails for grid views
+- Seed script will download and store free images locally
+
+---
+
+## Phase 8: Testing, Business Logic & SQA/QC
+
+### Testing Architecture
+
+```
+server/
+├── tests/
+│   ├── unit/                        # Unit Tests (BLL isolation)
+│   │   ├── services/
+│   │   │   ├── authService.test.js
+│   │   │   ├── bookingService.test.js
+│   │   │   ├── ticketService.test.js
+│   │   │   ├── animalService.test.js
+│   │   │   └── galleryService.test.js
+│   │   ├── middleware/
+│   │   │   ├── auth.test.js
+│   │   │   ├── roleGuard.test.js
+│   │   │   └── validate.test.js
+│   │   └── utils/
+│   │       ├── ApiError.test.js
+│   │       └── ApiResponse.test.js
+│   ├── integration/                 # Integration Tests (API endpoints)
+│   │   ├── auth.integration.test.js
+│   │   ├── booking.integration.test.js
+│   │   ├── animal.integration.test.js
+│   │   ├── ticket.integration.test.js
+│   │   ├── gallery.integration.test.js
+│   │   └── admin.integration.test.js
+│   ├── fixtures/                    # Test data factories
+│   │   ├── userFixtures.js
+│   │   ├── bookingFixtures.js
+│   │   └── animalFixtures.js
+│   └── setup.js                     # Global test setup/teardown
+│
+client/
+├── src/__tests__/                   # Frontend Tests
+│   ├── components/
+│   │   ├── Button.test.jsx
+│   │   ├── NavBar.test.jsx
+│   │   └── AnimatedTitle.test.jsx
+│   ├── pages/
+│   │   ├── Login.test.jsx
+│   │   ├── Register.test.jsx
+│   │   └── Tickets.test.jsx
+│   ├── context/
+│   │   └── AuthContext.test.jsx
+│   └── services/
+│       └── api.test.js
+```
+
+### Testing Frameworks & Tools
+
+| Tool | Layer | Purpose |
+|------|-------|---------|
+| **Jest** | Backend | Test runner, assertions, mocking |
+| **Supertest** | Backend | HTTP integration testing for Express |
+| **mongodb-memory-server** | Backend | In-memory MongoDB for isolated test runs |
+| **Vitest** | Frontend | Vite-native test runner (faster than Jest) |
+| **React Testing Library** | Frontend | Component testing with user-centric queries |
+| **MSW (Mock Service Worker)** | Frontend | Mock API responses in component tests |
+| **@testing-library/user-event** | Frontend | Simulate real user interactions |
+
+### Testing Techniques Applied
+
+| Technique | Where Applied |
+|-----------|---------------|
+| **Equivalence Partitioning** | Booking dates (past/today/future/far-future), ticket quantities (0/1/max/over-max), user roles (visitor/admin/unauthenticated) |
+| **Boundary Value Analysis** | Min/max ticket quantities, password length limits, date range edges, price boundaries (0, negative, max) |
+| **Decision Table Testing** | Booking status transitions (pending→confirmed→completed, pending→cancelled, completed→❌cancelled) |
+| **State Transition Testing** | Booking lifecycle, payment status flow, user account states |
+| **Error Guessing** | SQL injection in search, XSS in text fields, expired JWT, malformed ObjectIds, concurrent bookings |
+| **Negative Testing** | Invalid email formats, missing required fields, unauthorized access, duplicate registrations |
+
+---
+
+### Business Logic Rules & Invariants (Gap Analysis)
+
+#### 🎫 Booking Module — Business Rules
+
+| # | Rule | Validation Layer | Test Scenario |
+|---|------|-----------------|---------------|
+| B1 | Cannot book a **past date** | BLL + Frontend | `visitDate < today` → reject |
+| B2 | Cannot book more than **90 days** in advance | BLL | `visitDate > today + 90d` → reject |
+| B3 | Minimum **1 ticket** required per booking | BLL + Frontend | `tickets.length === 0` → reject |
+| B4 | Maximum **10 tickets** per single booking | BLL | `totalTickets > 10` → reject |
+| B5 | **Ticket quantity** must be 1–maxPerBooking | BLL | `quantity <= 0 OR quantity > maxPerBooking` → reject |
+| B6 | **Total amount** is recalculated server-side (never trust client) | BLL | Client sends `totalAmount: 0`, server recalculates from DB prices |
+| B7 | **Visitor count** must match total ticket quantity | BLL | `visitors.length !== totalTickets` → reject |
+| B8 | Booking reference must be **unique** | DAL (unique index) | Auto-generated `LZ-YYYYMMDD-XXXX` |
+| B9 | Only booking **owner** can view/cancel their booking | BLL + Middleware | User A tries to cancel User B's booking → 403 |
+| B10 | Cannot cancel **completed** or already **cancelled** bookings | BLL | `status === 'completed'` → reject cancel |
+| B11 | Cancellation within **24h of visit** is blocked | BLL | `visitDate - now < 24h` → reject |
+| B12 | Only **active ticket types** can be booked | BLL | Ticket with `isActive: false` → reject |
+| B13 | **Price changes** don't affect existing confirmed bookings | BLL | Booking stores snapshot of price at creation time |
+| B14 | Admin can update status: `pending → confirmed → completed` | BLL | Valid transitions only |
+
+#### 🔐 Auth Module — Business Rules
+
+| # | Rule | Validation Layer | Test Scenario |
+|---|------|-----------------|---------------|
+| A1 | **Email must be unique** (case-insensitive) | DAL (unique index) + BLL | `user@Test.com` and `user@test.com` → same user |
+| A2 | **Password minimum**: 8 chars, 1 uppercase, 1 number, 1 special | BLL + Frontend | `pass123` → reject, `Pass@123` → accept |
+| A3 | Password is **bcrypt hashed** before storage (never stored plain) | BLL | DB contains hash, not plaintext |
+| A4 | JWT expires after **7 days** | Config | Token from 8 days ago → 401 |
+| A5 | **Deactivated account** cannot login | BLL | `isActive: false` → "Account suspended" |
+| A6 | **Admin cannot deactivate themselves** | BLL | `req.user.id === targetUser.id && role === 'admin'` → reject |
+| A7 | **Forgot password token** expires after 1 hour | BLL | Token from 2 hours ago → "Token expired" |
+| A8 | Password reset invalidates **all previous tokens** | BLL | Old reset token → reject after new one issued |
+| A9 | **Login rate limiting**: max 5 attempts per 15 minutes per IP | Middleware | 6th attempt → 429 Too Many Requests |
+
+#### 🦁 Animal Module — Business Rules
+
+| # | Rule | Validation Layer | Test Scenario |
+|---|------|-----------------|---------------|
+| AN1 | **Soft delete** only (set `isActive: false`) | BLL | DELETE `/animals/:id` sets flag, doesn't remove document |
+| AN2 | Public API returns only **active** animals | BLL | `isActive: false` → excluded from GET `/animals` |
+| AN3 | Admin can view **all** animals (including inactive) | BLL | Admin GET with `?includeInactive=true` |
+| AN4 | **Category** must be from allowed enum | DAL (Mongoose enum) | `category: "dinosaur"` → validation error |
+| AN5 | **Image upload** validated: max 5MB, allowed types only | Middleware (Multer) | 10MB file → reject, `.exe` file → reject |
+| AN6 | Deleting animal **removes associated gallery images** from disk | BLL | Orphan cleanup on soft-delete toggle |
+
+#### 🖼️ Gallery Module — Business Rules
+
+| # | Rule | Validation Layer | Test Scenario |
+|---|------|-----------------|---------------|
+| G1 | **Image file required** for new gallery item | BLL + Middleware | POST without file → reject |
+| G2 | **File cleanup** on gallery item deletion | BLL | DELETE removes file from `uploads/gallery/` |
+| G3 | **Featured items** limited to max 12 at a time | BLL | 13th featured item → oldest unfeatured or reject |
+| G4 | **Category filter** returns only matching items | BLL | `?category=animals` → only animal photos |
+
+#### 💰 Payment Module — Business Rules
+
+| # | Rule | Validation Layer | Test Scenario |
+|---|------|-----------------|---------------|
+| P1 | **Payment method** must be from allowed list | BLL | `method: "bitcoin"` → reject |
+| P2 | **Mock payment** always succeeds after 2-second delay | BLL | Simulates processing time |
+| P3 | Payment status transitions: `unpaid → paid`, `paid → refunded` | BLL | `unpaid → refunded` → reject (must be paid first) |
+| P4 | **Refund** only for cancelled bookings with `paid` status | BLL | Completed booking → no refund |
+| P5 | **Cash on Arrival** sets status to `pending` until visit completion | BLL | Auto-confirmed only after admin marks completed |
+
+#### 👤 Admin Module — Business Rules
+
+| # | Rule | Validation Layer | Test Scenario |
+|---|------|-----------------|---------------|
+| AD1 | Only **admin role** can access admin routes | Middleware | Visitor token → 403 Forbidden |
+| AD2 | Revenue reports use **server timezone** consistently | BLL | UTC date boundaries match report totals |
+| AD3 | **Cannot delete the last admin** | BLL | 1 admin left → reject role change to visitor |
+| AD4 | Stats are calculated **in real-time** from DB aggregations | BLL | Not cached, always fresh |
+| AD5 | User list excludes **password hash** from response | BLL/Controller | `select('-password')` on all user queries |
+
+---
+
+### Unit Tests (BLL Isolation)
+
+##### [NEW] server/tests/unit/services/bookingService.test.js
+Tests for the booking business logic service:
+```
+✓ creates booking with valid data
+✓ rejects booking with past visit date (B1)
+✓ rejects booking more than 90 days ahead (B2)
+✓ rejects booking with 0 tickets (B3)
+✓ rejects booking exceeding 10 tickets (B4)
+✓ recalculates total server-side, ignoring client amount (B6)
+✓ rejects mismatched visitor count vs ticket quantity (B7)
+✓ generates unique booking reference (B8)
+✓ prevents non-owner from accessing booking (B9)
+✓ rejects cancellation of completed booking (B10)
+✓ blocks cancellation within 24h of visit (B11)
+✓ rejects inactive ticket types (B12)
+✓ snapshots ticket prices at creation time (B13)
+✓ validates status transition rules (B14)
+```
+
+##### [NEW] server/tests/unit/services/authService.test.js
+```
+✓ registers user with valid data
+✓ rejects duplicate email (case-insensitive) (A1)
+✓ enforces password strength requirements (A2)
+✓ stores bcrypt hash, not plaintext (A3)
+✓ rejects login for deactivated account (A5)
+✓ prevents admin from deactivating themselves (A6)
+✓ generates valid JWT with correct expiry (A4)
+✓ forgot password token expires after 1 hour (A7)
+✓ invalidates old reset tokens on new request (A8)
+```
+
+##### [NEW] server/tests/unit/services/ticketService.test.js
+```
+✓ creates ticket type with valid data
+✓ lists only active tickets for public
+✓ admin sees all tickets including inactive
+✓ rejects negative prices
+✓ rejects zero maxPerBooking
+```
+
+##### [NEW] server/tests/unit/middleware/auth.test.js
+```
+✓ passes with valid JWT
+✓ rejects missing Authorization header
+✓ rejects malformed token
+✓ rejects expired token
+✓ attaches decoded user to req.user
+```
+
+##### [NEW] server/tests/unit/middleware/roleGuard.test.js
+```
+✓ passes for matching role
+✓ rejects for non-matching role
+✓ rejects when no user attached
+```
+
+---
+
+### Integration Tests (API Endpoints)
+
+##### [NEW] server/tests/integration/auth.integration.test.js
+Full HTTP request/response testing with Supertest + mongodb-memory-server:
+```
+POST /api/auth/register
+  ✓ 201 — registers new user with valid data
+  ✓ 409 — rejects duplicate email
+  ✓ 400 — rejects weak password
+  ✓ 400 — rejects missing required fields
+
+POST /api/auth/login
+  ✓ 200 — returns JWT for valid credentials
+  ✓ 401 — rejects wrong password
+  ✓ 401 — rejects non-existent email
+  ✓ 403 — rejects deactivated account
+  ✓ 429 — rate limits after 5 failed attempts
+
+GET /api/auth/me
+  ✓ 200 — returns user profile with valid token
+  ✓ 401 — rejects without token
+  ✓ 401 — rejects expired token
+```
+
+##### [NEW] server/tests/integration/booking.integration.test.js
+```
+POST /api/bookings
+  ✓ 201 — creates booking with valid data
+  ✓ 401 — rejects unauthenticated request
+  ✓ 400 — rejects past visit date
+  ✓ 400 — rejects empty tickets array
+  ✓ 400 — rejects invalid ticket type ID
+
+GET /api/bookings/my
+  ✓ 200 — returns only current user's bookings
+  ✓ 200 — returns empty array for new user
+
+PUT /api/bookings/:id/cancel
+  ✓ 200 — cancels pending booking
+  ✓ 403 — rejects cancellation by non-owner
+  ✓ 400 — rejects cancellation of completed booking
+  ✓ 400 — rejects cancellation within 24h of visit
+```
+
+##### [NEW] server/tests/integration/admin.integration.test.js
+```
+GET /api/admin/stats
+  ✓ 200 — returns dashboard stats for admin
+  ✓ 403 — rejects visitor token
+
+GET /api/admin/users
+  ✓ 200 — returns user list without password hashes
+  ✓ 403 — rejects visitor token
+
+PUT /api/admin/users/:id/role
+  ✓ 200 — changes user role
+  ✓ 400 — prevents removing last admin
+  ✓ 400 — prevents admin deactivating themselves
+```
+
+---
+
+### Frontend Tests (Vitest + React Testing Library)
+
+##### [NEW] client/src/__tests__/pages/Login.test.jsx
+```
+✓ renders login form with email and password fields
+✓ shows validation error for empty email
+✓ shows validation error for short password
+✓ calls login API on form submission
+✓ displays toast on login failure
+✓ redirects to home on successful login
+✓ navigates to register page via link
+```
+
+##### [NEW] client/src/__tests__/pages/Tickets.test.jsx
+```
+✓ renders ticket type cards from API
+✓ increments/decrements ticket quantity
+✓ disables confirm button when no tickets selected
+✓ shows total price calculation
+✓ validates visitor details form
+✓ shows booking confirmation with reference
+```
+
+##### [NEW] client/src/__tests__/context/AuthContext.test.jsx
+```
+✓ provides initial unauthenticated state
+✓ login sets user and token
+✓ logout clears user and token
+✓ persists token to localStorage
+✓ auto-fetches profile on mount with stored token
+✓ handles expired token gracefully
+```
+
+---
+
+### SQA/QC Standards Checklist
+
+| Standard | Implementation |
+|----------|---------------|
+| **Input Validation** | Every field validated at 3 layers: Frontend form, Express middleware, Mongoose schema |
+| **Error Handling** | Global error handler, custom `ApiError` class, consistent JSON error format |
+| **API Response Format** | Standard `{ success, message, data }` wrapper via `ApiResponse` class |
+| **Authentication** | JWT with httpOnly consideration, bcrypt salt rounds = 12 |
+| **Authorization** | RBAC middleware on every protected route |
+| **Data Sanitization** | `express-mongo-sanitize` on all inputs |
+| **SQL/NoSQL Injection** | Parameterized queries via Mongoose, input sanitization |
+| **XSS Prevention** | React auto-escapes JSX, Helmet.js headers, avoid `dangerouslySetInnerHTML` where possible |
+| **Rate Limiting** | `express-rate-limit`: 100 req/15min general, 5 req/15min login |
+| **CORS** | Whitelist `http://localhost:5173` only |
+| **HTTP Security Headers** | Helmet.js (X-Frame-Options, CSP, HSTS, etc.) |
+| **Soft Delete** | All entities use `isActive` flag, never hard delete |
+| **Audit Trail** | `createdAt` and `updatedAt` timestamps on all models |
+| **Password Security** | bcrypt hashing, strength validation, never expose in API |
+| **Code Style** | ESLint enforced on both client and server |
+| **Separation of Concerns** | Routes → Controllers → Services → Models (N-tier) |
+| **Single Responsibility** | Each service handles one domain, each controller one resource |
+| **DRY** | Shared middleware, utility classes, reusable UI components |
+| **Logging** | Console logging with context (request ID, user ID) for debugging |
+
+---
+
+### Test Scripts
+
+```json
+// server/package.json
+{
+  "scripts": {
+    "test": "jest --runInBand --forceExit",
+    "test:unit": "jest tests/unit --runInBand",
+    "test:integration": "jest tests/integration --runInBand --forceExit",
+    "test:coverage": "jest --coverage --runInBand --forceExit"
+  }
+}
+
+// client/package.json
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  }
+}
+
+// root package.json
+{
+  "scripts": {
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd server && npm test",
+    "test:client": "cd client && npm test"
+  }
+}
+```
+
+---
+
+## Verification Plan
+
+### Phase-by-Phase Verification
+1. **Phase 1** — `npm run dev` starts both servers, no errors
+2. **Phase 2** — `npm run seed` populates all 6 collections, verify in MongoDB Compass
+3. **Phase 3** — All API endpoints return correct responses (tested via integration tests)
+4. **Phase 4** — Register → Login → Access protected → Logout flow works
+5. **Phase 5** — Full booking lifecycle: create → view → cancel
+6. **Phase 6** — Admin dashboard loads stats, CRUD operations work
+7. **Phase 7** — All pages render, GSAP animations intact, responsive
+8. **Phase 8** — `npm test` passes all unit + integration tests with 80%+ coverage
+
+### Browser Verification
+- Navigate all pages (Home, Gallery, Animals, Events, Tickets, Login, Admin)
+- Test responsive design on mobile viewport
+- Verify GSAP animations still work after restructuring
+- Test admin dashboard charts and tables
+- Confirm booking creation and cancellation flow
+
+### Manual Verification
+- Ask user to verify MongoDB data via MongoDB Compass
+- Visual review of all pages in browser
+- Run `npm test` and review coverage report
+
+
+---
+i am following this plan can you review my current project see how far we got and what's needed what can be fixed i am currently having errors as well
